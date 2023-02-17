@@ -1,36 +1,35 @@
 /*******************************************************/
 // P5.play: t01_create_sprite
 // Create a sprite
-// Written by ??? 
+// Written by dHRUV 
 /*******************************************************/
 const TASKNAME = "t01_create_sprite";
 
 /*******************************************************/
-// setup()
-/*******************************************************/
+/****************************IMG***************************/
 // function preload() {
 //   img = loadImage('bob.png');
 // }
+/****************************IMG***************************/
+
 function setup() {
   console.log("setup: bob");
-  //awworld.gravity.y = 94;
   cnv = new Canvas(windowWidth, windowHeight);
   rect = new Sprite(300, 300, 30, 30, 'd');
   cir = new Sprite(windowWidth / 2, windowHeight / 2, 150, 150, 'd');
   cir.rotationSpeed = 0;
   rect.rotationSpeed = 40;
-
-  //cir.addImage("img");
   rect.vel.x = 2;
   rect.vel.y = 6;
   rect.bounce = 0;
-  //cir.bounce = 0;
   cir.shapeColor = color("red")
   cir.stroke = color("red")
+  /** IMG **/
   //cir.addImage(img);
-  
   //img.resize(150, 150)
+  /** IMG **/
   movement();
+  wallGroup = new Group();
   walls();
   alienGroup = new Group();
   alien();
@@ -40,6 +39,11 @@ function setup() {
 
 function delAlien(cir, alien) {
   alien.remove();
+}
+function delWall(cir, wall){
+  cir.vel.x = 0;
+  cir.vel.y = 0;
+  //cir.remove();
 }
 function movement() {
   let speed = 40;
@@ -78,11 +82,8 @@ function alien() {
     alienGroup.add(alien);
   }
 }
-//function shot() {
-
-//}
 function walls() {
-  let w = 3
+  let w = 30
   wallLH = new Sprite(0, height / 2, w, height, 'k');
   wallLH.shapeColor = color("black");
   wallRH = new Sprite(width, height / 2, w, height, 'k');
@@ -91,6 +92,10 @@ function walls() {
   wallTop.shapeColor = color("black");
   wallBot = new Sprite(width, height, width * 2, w, 'k');
   wallBot.shapeColor = color("black");
+  wallGroup.add(wallLH);
+  wallGroup.add(wallRH);
+  wallGroup.add(wallTop);
+  wallGroup.add(wallBot);
 }
 /*******************************************************/
 // draw()
@@ -99,10 +104,11 @@ function draw() {
   background('#ceddf5');
   //cir = new Sprite(300, 300, 300);
   cir.collides(alienGroup, delAlien);
+  cir.collides(wallGroup, delWall);
   //cir.moveTo(mouseX, mouseY, 1000);
   rect.bounciness = 0;
   if (mouse.presses()) {
-    shot = new Sprite(cir.position.x, cir.position.y, 40, 'k');
+    shot = new Sprite(cir.position.x, cir.position.y, 40, 'd');
     shot.moveTowards(mouseX, mouseY);
     shot.setSpeed(400);
   }
