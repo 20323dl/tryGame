@@ -16,7 +16,8 @@ function setup() {
   console.log("setup: bob");
   cnv = new Canvas(windowWidth, windowHeight);
   rect = new Sprite(300, 300, 30, 30, 'd');
-  cir = new Sprite(windowWidth / 2, windowHeight / 2, 150, 150, 'd');
+  cir = new Sprite(windowWidth / 2, windowHeight / 2, 75, 75, 'd');
+  shot = new Sprite(cir.position.x, cir.position.y, 40, 'd');
   cir.rotationSpeed = 0;
   rect.rotationSpeed = 40;
   rect.vel.x = 2;
@@ -28,6 +29,7 @@ function setup() {
   //cir.addImage(img);
   //img.resize(150, 150)
   /** IMG **/
+  shotGroup = new Group();
   movement();
   wallGroup = new Group();
   walls();
@@ -38,15 +40,22 @@ function setup() {
 }
 
 function delAlien(cir, alien) {
+  cir.vel.x = 0;
+  cir.vel.y = 0;
   alien.remove();
 }
-function delWall(cir, wall){
+
+function delShot(shot, alien) {
+  alien.remove();
+  shot.remove();
+}
+function delWall(cir, wall) {
   cir.vel.x = 0;
   cir.vel.y = 0;
   //cir.remove();
 }
 function movement() {
-  let speed = 40;
+  let speed = 10;
   let slow = 0;
   document.addEventListener("keydown", function(event) {
     if (event.code === "KeyA") {
@@ -84,37 +93,56 @@ function alien() {
 }
 function walls() {
   let w = 30
-  wallLH = new Sprite(0, height / 2, w, height, 'k');
-  wallLH.shapeColor = color("black");
-  wallRH = new Sprite(width, height / 2, w, height, 'k');
-  wallRH.shapeColor = color("black");
-  wallTop = new Sprite(0, 0, width * 2, w, 'k');
-  wallTop.shapeColor = color("black");
-  wallBot = new Sprite(width, height, width * 2, w, 'k');
-  wallBot.shapeColor = color("black");
+  wallLH = new Sprite(0, height / 2, w, height, 's');
+  //wallLH.shapeColor = color("black");
+  wallRH = new Sprite(width, height / 2, w, height, 's');
+  //wallRH.shapeColor = color("black");
+  wallTop = new Sprite(0, 0, width * 2, w, 's');
+  //wallTop.shapeColor = color("black");
+  wallBot = new Sprite(width, height, width * 2, w, 's');
+  //wallBot.shapeColor = color("black");
   wallGroup.add(wallLH);
   wallGroup.add(wallRH);
   wallGroup.add(wallTop);
   wallGroup.add(wallBot);
+  //wallGroup.shapeColor = color("black");
 }
+
+
+
 /*******************************************************/
 // draw()
 /*******************************************************/
 function draw() {
   background('#ceddf5');
-  //cir = new Sprite(300, 300, 300);
   cir.collides(alienGroup, delAlien);
   cir.collides(wallGroup, delWall);
+  cir.rotateTo(mouse, 50);
+  if (mouse.presses()) {
+    shot();
+  }
+  shot.collides(alienGroup, delShot);
   //cir.moveTo(mouseX, mouseY, 1000);
   rect.bounciness = 0;
-  if (mouse.presses()) {
-    shot = new Sprite(cir.position.x, cir.position.y, 40, 'd');
-    shot.moveTowards(mouseX, mouseY);
-    shot.setSpeed(400);
-  }
-  cir.rotateTo(mouse, 50);
+
+
 }
 
+function shot() {
+  //let shot;  
+  console.log("asdfb");
+    
+  // shot = createSprite(cir.position.x, cir.position.y, 40);
+  // shot.setSpeed(20, cir.rotation);
+  // shotGroup.add(shot);
+
+}
 /*******************************************************/
 //  END OF APP
 /*******************************************************/
+
+
+    // shot = new Sprite(cir.position.x, cir.position.y, 40, 'd');
+    // //shot.moveTowards(mouseX, mouseY);
+    // shot.setSpeed(20, cir.rotation);
+    // shotGroup.add(shot);
