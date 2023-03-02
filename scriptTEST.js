@@ -14,14 +14,10 @@ const TASKNAME = "t01_create_sprite";
 
 function setup() {
   console.log("setup: bob");
+  
   cnv = new Canvas(windowWidth, windowHeight);
-  rect = new Sprite(300, 300, 30, 30, 'd');
   cir = new Sprite(windowWidth / 2, windowHeight / 2, 75, 75, 'd');
   cir.rotationSpeed = 0;
-  rect.rotationSpeed = 40;
-  rect.vel.x = 2;
-  rect.vel.y = 6;
-  rect.bounce = 0;
   cir.shapeColor = color("red")
   cir.stroke = color("red")
   /** IMG **/
@@ -33,14 +29,14 @@ function setup() {
   walls();
   alienGroup = new Group();
   alien();
-  line = new Sprite(cir.position.x, cir.position.y, 60, 5, 'n');
-  line.moveTo(mouseX, mouseY);
+  bullet = new Sprite(cir.x, cir.y, 10, 'd');
+  bullet.remove()
 }
 
 function delAlien(cir, alien) {
   alien.remove();
 }
-function delWall(cir, wall){
+function delWall(cir, wall) {
   cir.vel.x = 0;
   cir.vel.y = 0;
   //cir.remove();
@@ -103,16 +99,50 @@ function walls() {
 function draw() {
   background('#ceddf5');
   //cir = new Sprite(300, 300, 300);
-  cir.collides(alienGroup, delAlien);
   cir.collides(wallGroup, delWall);
   //cir.moveTo(mouseX, mouseY, 1000);
-  rect.bounciness = 0;
-  if (mouse.presses()) {
-    shot = new Sprite(cir.position.x, cir.position.y, 40, 'd');
-    shot.moveTowards(mouseX, mouseY);
-    shot.setSpeed(400);
-  }
   cir.rotateTo(mouse, 50);
+  //bullet.collides(wallgroup)
+  bullet.collides(wallGroup, delBullet)
+  bullet.collides(alienGroup, delAlien1)
+  alienGroup.moveTowards(cir)
+}
+
+function delBullet(wallGroup, bullet) {
+  wallGroup.remove();  
+}
+
+function delAlien1(alienGroup, bullet) {
+  bullet.remove();  
+  alienGroup.remove();
+}
+function mouseClicked() {
+  // Create the bullet sprite
+  bullet = new Sprite(cir.x, cir.y, 10, 'd');
+  bullet.shapeColor = color("red");
+  // Move the bullet to the edge of the gun and set it's rotation
+  setBulletPosition(cir, bullet)
+  // Fire the bullet!
+  bullet.setSpeed(20);
+  //debug(bullet.direction);
+  bullet.moveTowards(mouseX, mouseY);
+}
+function setBulletPosition(_gun, _round) {
+  // Set the rotation of the _round to the same as the _gun
+  _round.rotation = _gun.rotation
+  _round.direction = _gun.direction
+
+  // Calculate the offset to the edge of the gun (plus the width of the bullet)
+  deg = _gun.rotation;
+  rads = deg * Math.PI / 180;  // Convert degrees to radians
+
+  h = _gun.w / 2 + _round.w / 2 +10; // h is the distance from the center of the _gun to the center of the _round
+  offsetX = h * Math.cos(rads);
+  offsetY = h * Math.sin(rads);
+
+  // Move the _round to the edge of the gun
+  _round.x = _gun.x + offsetX;
+  _round.y = _gun.y + offsetY;
 }
 
 /*******************************************************/
