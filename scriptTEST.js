@@ -30,7 +30,7 @@ function setup() {
   alienGroup = new Group();
   alien();
   bullet = new Sprite(cir.x, cir.y, 10, 'd');
-  bullet.remove()
+  bullet.remove();
 }
 
 function delAlien(cir, alien) {
@@ -75,6 +75,8 @@ function alien() {
     alien.vel.y = random(1, 10);
     alien.bounciness = 0;
     alien.friction = 0;
+    alien.moveTowards(cir);
+    alien.setSpeed(2)
     alienGroup.add(alien);
   }
 }
@@ -92,6 +94,7 @@ function walls() {
   wallGroup.add(wallRH);
   wallGroup.add(wallTop);
   wallGroup.add(wallBot);
+
 }
 /*******************************************************/
 // draw()
@@ -105,7 +108,8 @@ function draw() {
   //bullet.collides(wallgroup)
   bullet.collides(wallGroup, delBullet)
   bullet.collides(alienGroup, delAlien1)
-  alienGroup.moveTowards(cir)
+  
+  
 }
 
 function delBullet(wallGroup, bullet) {
