@@ -13,6 +13,9 @@ const TASKNAME = "t01_create_sprite";
 /****************************IMG***************************/
 
 /****************************setup()***************************/
+let score = 0;
+let alienSpeed = 2
+const DISTANCE_THRESHOLD = 200; //radius of cir to not spawn kill
 function setup() {
   console.log("setup: bob");
   cnv = new Canvas(windowWidth, windowHeight);
@@ -33,7 +36,6 @@ function setup() {
   wallGroup = new Group();
   walls();
   alienGroup = new Group();
-  //alien();
   setInterval(alien, 5000);
   bullet = new Sprite(cir.x, cir.y, 10, 'd');
   bullet.remove();
@@ -45,13 +47,23 @@ function setup() {
 function draw() {
   background('#ceddf5');
   cir.collides(wallGroup, bounceWall);
+  cir.collides(alienGroup, endGame);
   cir.rotateTo(mouse, 50);
   bullet.collides(wallGroup, delBullet)
   bullet.collides(alienGroup, delAlien)
   bullet.friction = 9;
   for (const alien of alienGroup) {
     alien.moveTo(cir.x, cir.y);
-    alien.setSpeed(2);
+    alien.setSpeed(alienSpeed);
+  }
+  noFill();
+  circle(mouseX, mouseY, 25);
+  line(mouseX, mouseY, cir.x, cir.y);
+  fill('black');
+  textSize(30);
+  text(score, 100, 100);
+  if (score > 30) {
+    alienSpeed = 5;
   }
 }
 
@@ -62,12 +74,19 @@ function bounceWall(cir, wall) {
   cir.vel.x = 0;
   cir.vel.y = 0;
 }
+function endGame(cir, alienGroup) {
+  //cir.remove();
+  textSize(80);
+  text("YOU LOSE: " + score, windowWidth / 2, windowHeight / 2);
+  noLoop();
+}
 function delBullet(wallGroup, bullet) {
   wallGroup.remove();
 }
 function delAlien(alienGroup, bullet) {
   bullet.remove();
   alienGroup.remove();
+  score++
 }
 //colliding functions
 
@@ -102,13 +121,24 @@ function movement() {
 
 //aliens
 function alien() {
-  for (i = 0; i < 7; i++) {
-    alien = new Sprite(random(1, windowWidth), random(1, windowHeight), 80, 80, 'd');
+  for (i = 0; i < 6; i++) {
+    
+//cir to not spawn kill
+    let xPosition = random(1, windowWidth);
+    let yPosition = random(1, windowHeight);
+    
+    while (dist(cir.x, cir.y, xPosition, yPosition) < DISTANCE_THRESHOLD) { 
+        xPosition = random(1, windowWidth);
+        yPosition = random(1, windowHeight);
+    }
+//cir to not spawn kill  
+    
+    alien = new Sprite(xPosition, yPosition, 50, 50, 'd');
     alien.shapeColor = color("black");
     alien.vel.x = random(1, 10);
     alien.vel.y = random(1, 10);
     alien.bounciness = 0;
-    alien.friction = 100;
+
     alienGroup.add(alien);
   }
 }
