@@ -14,13 +14,17 @@ const TASKNAME = "t01_create_sprite";
 
 /****************************setup()***************************/
 let score = 0;
-let alienSpeed = 2
+let alienSpeed = 2;
+let death = 400;
 const DISTANCE_THRESHOLD = 200; //radius of cir to not spawn kill
+let secLeft = 6;
+
 function setup() {
   console.log("setup: bob");
   cnv = new Canvas(windowWidth, windowHeight);
   //player
   cir = new Sprite(windowWidth / 2, windowHeight / 2, 75, 'd');
+
   cir.rotationSpeed = 0;
   cir.shapeColor = color("red")
   cir.stroke = color("red")
@@ -40,6 +44,8 @@ function setup() {
   bullet = new Sprite(cir.x, cir.y, 10, 'd');
   bullet.remove();
   //functions
+
+  timer();
 }
 /****************************setup()***************************/
 
@@ -65,9 +71,26 @@ function draw() {
   if (score > 30) {
     alienSpeed = 5;
   }
+  if (secLeft === 0) {
+    endGame();
+    text("lost becasue you camped", windowWidth / 2, windowHeight / 2 - 100);
+  }
+  text(secLeft, windowWidth - 100, 100);
 }
 
 /****************************draw()***************************/
+
+//timer
+function timer() {
+  window.setInterval(runTimer, 1000);
+}
+
+function runTimer() {
+  secLeft = secLeft - 1;
+  if (secLeft === 0) {
+    endGame();
+  }
+}
 
 //colliding functions
 function bounceWall(cir, wall) {
@@ -92,9 +115,10 @@ function delAlien(alienGroup, bullet) {
 
 //player move
 function movement() {
-  let speed = 40;
+  let speed = 20;
   let slow = 0;
   document.addEventListener("keydown", function(event) {
+    secLeft = 6;
     if (event.code === "KeyA") {
       cir.vel.x = -speed;
     } else if (event.code === "KeyD") {
@@ -122,17 +146,17 @@ function movement() {
 //aliens
 function alien() {
   for (i = 0; i < 6; i++) {
-    
-//cir to not spawn kill
+
+    //cir to not spawn kill
     let xPosition = random(1, windowWidth);
     let yPosition = random(1, windowHeight);
-    
-    while (dist(cir.x, cir.y, xPosition, yPosition) < DISTANCE_THRESHOLD) { 
-        xPosition = random(1, windowWidth);
-        yPosition = random(1, windowHeight);
+
+    while (dist(cir.x, cir.y, xPosition, yPosition) < DISTANCE_THRESHOLD) {
+      xPosition = random(1, windowWidth);
+      yPosition = random(1, windowHeight);
     }
-//cir to not spawn kill  
-    
+    //cir to not spawn kill  
+
     alien = new Sprite(xPosition, yPosition, 50, 50, 'd');
     alien.shapeColor = color("black");
     alien.vel.x = random(1, 10);

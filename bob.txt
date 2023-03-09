@@ -1,0 +1,11 @@
+const DISTANCE_THRESHOLD = 200; //radius of cir to not spawn kill
+
+//cir to not spawn kill
+    let xPosition = random(1, windowWidth);
+    let yPosition = random(1, windowHeight);
+    
+    while (dist(cir.x, cir.y, xPosition, yPosition) < DISTANCE_THRESHOLD) { 
+        xPosition = random(1, windowWidth);
+        yPosition = random(1, windowHeight);
+    }
+//cir to not spawn kill  
