@@ -19,6 +19,7 @@ let death = 400;
 const DISTANCE_THRESHOLD = 200; //radius of cir to not spawn kill
 let secLeft = 6;
 let health = 5;
+let button;
 
 function setup() {
   console.log("setup: bob");
@@ -44,12 +45,23 @@ function setup() {
   setInterval(alien, 5000);
   bullet = new Sprite(cir.x, cir.y, 10, 'd');
   bullet.remove();
+  timer();
   //functions
 
-  timer();
+  button = createButton('reset');
+  button.position(0, 0);
+  button.mousePressed(resetGame);
 }
 /****************************setup()***************************/
-
+function resetGame() {
+  score = 0;
+  health = 5;
+  death = 400;
+  alienSpeed = 2;
+  secLeft = 6;
+  alienGroup.remove();
+  loop();
+}
 /****************************draw()***************************/
 function draw() {
   background('#ceddf5');
@@ -58,10 +70,10 @@ function draw() {
   cir.rotateTo(mouse, 50);
   bullet.collides(wallGroup, delBullet)
   bullet.collides(alienGroup, delAlien)
-  bullet.friction = 9;
+
   for (const alien of alienGroup) {
     alien.moveTo(cir.x, cir.y);
-    alien.setSpeed(alienSpeed);
+    alien.speed = alienSpeed;
   }
   noFill();
   circle(mouseX, mouseY, 25);
@@ -79,17 +91,15 @@ function draw() {
   text(secLeft, windowWidth - 100, 100);
   if (health === 0) {
     endGame();
-  } 
-  text(health, windowWidth/2, 100);
+  }
+  text(health, windowWidth / 2, 100);
 }
-
 /****************************draw()***************************/
 
 //timer
 function timer() {
   window.setInterval(runTimer, 1000);
 }
-
 function runTimer() {
   secLeft = secLeft - 1;
   if (secLeft === 0) {
@@ -97,20 +107,28 @@ function runTimer() {
   }
 }
 
-//colliding functions
+/****************************colliding functions***************************/
 function bounceWall(cir, wall) {
   cir.vel.x = 0;
   cir.vel.y = 0;
 }
 function healthy(cir, alienGroup) {
+  cir.shapeColor = color("white");
+  cir.stroke = color("white");
+  const hit = () => cir.shapeColor = color("red");
+  const hitOutline = () => cir.stroke = color("red");
   health--;
   alienGroup.remove();
+  setTimeout(hit, 100);
+  setTimeout(hitOutline, 100)
+
 }
 function endGame(cir, alienGroup) {
   //cir.remove();
   textSize(80);
   text("YOU LOSE: " + score, windowWidth / 2, windowHeight / 2);
   noLoop();
+  button.mousePressed(resetGame);
 }
 function delBullet(wallGroup, bullet) {
   wallGroup.remove();
@@ -120,8 +138,10 @@ function delAlien(alienGroup, bullet) {
   alienGroup.remove();
   score++
 }
-//colliding functions
+/****************************colliding functions***************************
 
+
+/****************************FUNDEMENTALS***************************/
 //player move
 function movement() {
   let speed = 20;
@@ -168,8 +188,8 @@ function alien() {
 
     alien = new Sprite(xPosition, yPosition, 50, 50, 'd');
     alien.shapeColor = color("black");
-    alien.vel.x = random(1, 10);
-    alien.vel.y = random(1, 10);
+    //alien.vel.x = random(1, 10);
+    //alien.vel.y = random(1, 10);
     alien.bounciness = 0;
 
     alienGroup.add(alien);
@@ -204,9 +224,9 @@ function mouseClicked() {
   // Move the bullet to the edge of the gun and set it's rotation
   setBulletPosition(cir, bullet)
   // Fire the bullet!
-  bullet.setSpeed(20);
+  bullet.speed = 20;
   //debug(bullet.direction);
-  bullet.moveTowards(mouseX, mouseY);
+  bullet.moveTowards(mouseX, mouseY, 200 * (0.1 / dist(cir.x, cir.y, mouse.x, mouse.y)));
 }
 function setBulletPosition(_gun, _round) {
   // Set the rotation of the _round to the same as the _gun
@@ -226,6 +246,7 @@ function setBulletPosition(_gun, _round) {
   _round.y = _gun.y + offsetY;
 }
 //shooting mech
+/****************************FUNDEMENTALS***************************/
 
 /*******************************************************/
 //  END OF APP
