@@ -30,7 +30,9 @@ function setup() {
   cir.rotationSpeed = 0;
   cir.shapeColor = color("red")
   cir.stroke = color("red")
+  freeze = new Sprite(random(1, windowWidth), random(1, windowHeight), 75, 'd')
   //player
+ 
 
   /** IMG **/
   //cir.addImage(img);
@@ -66,6 +68,7 @@ function resetGame() {
 function draw() {
   background('#ceddf5');
   cir.collides(wallGroup, bounceWall);
+  cir.collides(freeze, freezer);
   cir.collides(alienGroup, healthy);
   cir.rotateTo(mouse, 50);
   bullet.collides(wallGroup, delBullet)
@@ -107,6 +110,7 @@ function runTimer() {
   }
 }
 
+
 /****************************colliding functions***************************/
 function bounceWall(cir, wall) {
   cir.vel.x = 0;
@@ -137,6 +141,12 @@ function delAlien(alienGroup, bullet) {
   bullet.remove();
   alienGroup.remove();
   score++
+}
+function freezer(cir, freeze) {
+  alienSpeed = 0.5;
+  const normalSpeed = () => alienSpeed = 4;
+  setTimeout(normalSpeed, 7000);
+  freeze.remove();
 }
 /****************************colliding functions***************************
 

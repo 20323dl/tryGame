@@ -82,6 +82,7 @@ function alien() {
     alienGroup.add(alien);
   }
 }
+
 function walls() {
   let w = 30
   wallLH = new Sprite(0, height / 2, w, height, 'k');
