@@ -7,9 +7,9 @@ const TASKNAME = "t01_create_sprite";
 
 /*******************************************************/
 /****************************IMG***************************/
-// function preload() {
-//   img = loadImage('bob.png');
-// }
+function preload() {
+  img = loadImage('freezePU.png');
+}
 /****************************IMG***************************/
 
 /****************************setup()***************************/
@@ -28,14 +28,11 @@ function setup() {
   cnv = new Canvas(windowWidth, windowHeight);
   //player
   cir = new Sprite(windowWidth / 2, windowHeight / 2, 75, 'd');
-
   cir.rotationSpeed = 0;
   cir.shapeColor = color("red");
   cir.stroke = color("red");
-
   //player
-
-
+  
   /** IMG **/
   //cir.addImage(img);
   //img.resize(150, 150)
@@ -51,13 +48,15 @@ function setup() {
   bullet.remove();
   timer();
   slowGroup = new Group();
-  setInterval(slow, random(2000, 50000));
+  setInterval(slow, random(2000, 4000));
   //slow();
   //functions
 
+  //reset game button
   button = createButton('reset');
   button.position(0, 0);
   button.mousePressed(resetGame);
+  //reset game button
 }
 /****************************setup()***************************/
 function resetGame() {
@@ -74,7 +73,7 @@ function resetGame() {
 function draw() {
   background('#ceddf5');
   cir.collides(wallGroup, bounceWall);
-  cir.collides(slowGroup, freezer);
+  cir.collides(slowGroup, freezer); //when cir collides with freeze
   cir.collides(alienGroup, healthy);
   cir.rotateTo(mouse, 50);
   bullet.collides(wallGroup, delBullet)
@@ -90,9 +89,6 @@ function draw() {
   fill('black');
   textSize(30);
   text(score, 100, 100);
-  // if (score > 30) {
-  //   alienSpeed = 5;
-  // }
 
   if (score>30){
     alienAmmount = 12
@@ -152,6 +148,8 @@ function delAlien(alienGroup, bullet) {
   alienGroup.remove();
   score++
 }
+
+//calls this when cir hits freeze(the powerup)
 function freezer(cir, freeze) {
   alienSpeed = 0.5;
   const normalSpeed = () => alienSpeed = 4;
@@ -270,14 +268,17 @@ function setBulletPosition(_gun, _round) {
 
 
 /** *************************POWER UPS ************************* **/
-
-function slow() {
-  //for (i = 0; i < 1; i++) {
+//powerup slows down the aliens\
+//function only for looks
+function slow() { 
     freeze = new Sprite(random(1, windowWidth), random(1, windowHeight), 75, 's');
     freeze.shapeColor = color("blue");
     freeze.stroke = color("blue")
     slowGroup.add(freeze);
-  //}
+    freeze.addImage(img);
+    img.resize(75,75);
+    freeze.addImage(img);
+    img.resize(75,75);
 }
 
 /** *************************POWER UPS ************************* **/
