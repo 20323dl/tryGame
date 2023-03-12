@@ -9,6 +9,7 @@ const TASKNAME = "t01_create_sprite";
 /****************************IMG***************************/
 function preload() {
   img = loadImage('freezePU.png');
+  img1 = loadImage('healthPU.png');
 }
 /****************************IMG***************************/
 
@@ -48,7 +49,9 @@ function setup() {
   bullet.remove();
   timer();
   slowGroup = new Group();
-  setInterval(slow, random(2000, 4000));
+  setInterval(slow, random(30000, 60000));
+  healthGroup = new Group();
+  setInterval(healthBoost, random(30000, 60000));
   //slow();
   //functions
 
@@ -60,13 +63,17 @@ function setup() {
 }
 /****************************setup()***************************/
 function resetGame() {
+  console.log("restart")
   score = 0;
   health = 5;
   death = 400;
   alienSpeed = 2;
+  alienAmmount = 5
   secLeft = 6;
   alienGroup.remove();
   slowGroup.remove();
+  healthGroup.remove();
+  bullet.remove();
   loop();
 }
 /****************************draw()***************************/
@@ -74,6 +81,7 @@ function draw() {
   background('#ceddf5');
   cir.collides(wallGroup, bounceWall);
   cir.collides(slowGroup, freezer); //when cir collides with freeze
+  cir.collides(healthGroup, healthBooster); //when cir collides with healthPU
   cir.collides(alienGroup, healthy);
   cir.rotateTo(mouse, 50);
   bullet.collides(wallGroup, delBullet)
@@ -90,8 +98,9 @@ function draw() {
   textSize(30);
   text(score, 100, 100);
 
-  if (score>30){
-    alienAmmount = 12
+  if (score>20){
+    alienAmmount = 12;
+    alienspeed = 4;
   }
   if (secLeft === 0) {
     endGame();
@@ -155,6 +164,11 @@ function freezer(cir, freeze) {
   const normalSpeed = () => alienSpeed = 4;
   setTimeout(normalSpeed, 7000);
   freeze.remove();
+}
+//calls this when cir hits healthPU
+function healthBooster(cir, healthPU) {
+  health = 5;
+  healthPU.remove();
 }
 /****************************colliding functions***************************
 
@@ -238,13 +252,12 @@ function mouseClicked() {
   // Create the bullet sprite
   bullet = new Sprite(cir.x, cir.y, 10, 'd');
   bullet.shapeColor = color("red");
-
   // Move the bullet to the edge of the gun and set it's rotation
   setBulletPosition(cir, bullet)
   // Fire the bullet!
   bullet.speed = 20;
   //debug(bullet.direction);
-  bullet.moveTowards(mouseX, mouseY, 200 * (0.1 / dist(cir.x, cir.y, mouse.x, mouse.y)));
+  bullet.moveTowards(mouseX, mouseY, 500 * (0.1 / dist(cir.x, cir.y, mouse.x, mouse.y)));
 }
 function setBulletPosition(_gun, _round) {
   // Set the rotation of the _round to the same as the _gun
@@ -271,7 +284,7 @@ function setBulletPosition(_gun, _round) {
 //powerup slows down the aliens\
 //function only for looks
 function slow() { 
-    freeze = new Sprite(random(1, windowWidth), random(1, windowHeight), 75, 's');
+    freeze = new Sprite(random(1, windowWidth), random(1, windowHeight), 75, 'k');
     freeze.shapeColor = color("blue");
     freeze.stroke = color("blue")
     slowGroup.add(freeze);
@@ -279,6 +292,16 @@ function slow() {
     img.resize(75,75);
     freeze.addImage(img);
     img.resize(75,75);
+}
+function healthBoost() { 
+    healthPU = new Sprite(random(1, windowWidth), random(1, windowHeight), 75, 'k');
+    healthPU.shapeColor = color("blue");
+    healthPU.stroke = color("blue")
+    healthGroup.add(healthPU);
+    healthPU.addImage(img);
+    img.resize(75,75);
+    healthPU.addImage(img1);
+    img1.resize(75,75);
 }
 
 /** *************************POWER UPS ************************* **/
