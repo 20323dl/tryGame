@@ -20,6 +20,8 @@ const DISTANCE_THRESHOLD = 200; //radius of cir to not spawn kill
 let secLeft = 6;
 let health = 5;
 let button;
+let freeze;
+let alienAmmount = 5;
 
 function setup() {
   console.log("setup: bob");
@@ -28,11 +30,11 @@ function setup() {
   cir = new Sprite(windowWidth / 2, windowHeight / 2, 75, 'd');
 
   cir.rotationSpeed = 0;
-  cir.shapeColor = color("red")
-  cir.stroke = color("red")
-  freeze = new Sprite(random(1, windowWidth), random(1, windowHeight), 75, 'd')
+  cir.shapeColor = color("red");
+  cir.stroke = color("red");
+
   //player
- 
+
 
   /** IMG **/
   //cir.addImage(img);
@@ -48,6 +50,9 @@ function setup() {
   bullet = new Sprite(cir.x, cir.y, 10, 'd');
   bullet.remove();
   timer();
+  slowGroup = new Group();
+  setInterval(slow, random(2000, 50000));
+  //slow();
   //functions
 
   button = createButton('reset');
@@ -62,13 +67,14 @@ function resetGame() {
   alienSpeed = 2;
   secLeft = 6;
   alienGroup.remove();
+  slowGroup.remove();
   loop();
 }
 /****************************draw()***************************/
 function draw() {
   background('#ceddf5');
   cir.collides(wallGroup, bounceWall);
-  cir.collides(freeze, freezer);
+  cir.collides(slowGroup, freezer);
   cir.collides(alienGroup, healthy);
   cir.rotateTo(mouse, 50);
   bullet.collides(wallGroup, delBullet)
@@ -84,8 +90,12 @@ function draw() {
   fill('black');
   textSize(30);
   text(score, 100, 100);
-  if (score > 30) {
-    alienSpeed = 5;
+  // if (score > 30) {
+  //   alienSpeed = 5;
+  // }
+
+  if (score>30){
+    alienAmmount = 12
   }
   if (secLeft === 0) {
     endGame();
@@ -184,7 +194,7 @@ function movement() {
 
 //aliens
 function alien() {
-  for (i = 0; i < 10; i++) {
+  for (i = 0; i < alienAmmount; i++) {
 
     //cir to not spawn kill
     let xPosition = random(1, windowWidth);
@@ -258,6 +268,19 @@ function setBulletPosition(_gun, _round) {
 //shooting mech
 /****************************FUNDEMENTALS***************************/
 
+
+/** *************************POWER UPS ************************* **/
+
+function slow() {
+  //for (i = 0; i < 1; i++) {
+    freeze = new Sprite(random(1, windowWidth), random(1, windowHeight), 75, 's');
+    freeze.shapeColor = color("blue");
+    freeze.stroke = color("blue")
+    slowGroup.add(freeze);
+  //}
+}
+
+/** *************************POWER UPS ************************* **/
 /*******************************************************/
 //  END OF APP
 /*******************************************************/
